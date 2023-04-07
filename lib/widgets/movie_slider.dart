@@ -1,8 +1,41 @@
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
-class MovieSlider extends StatelessWidget {
-  const MovieSlider({super.key});
+import '../models/models.dart';
+
+class MovieSlider extends StatefulWidget {
+  final List<Movie> popularMovies;
+  final String? sectionTitle;
+  final Function onNextPage;
+
+  const MovieSlider({super.key, required this.popularMovies, this.sectionTitle, required this.onNextPage});
+
+  @override
+  State<MovieSlider> createState() => _MovieSliderState();
+}
+
+class _MovieSliderState extends State<MovieSlider> {
+
+  final ScrollController scrollController = new ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(() {
+      if(scrollController.position.pixels >= scrollController.position.maxScrollExtent - 500){
+        widget.onNextPage();
+      }
+      
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,16 +45,21 @@ class MovieSlider extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 20, top: 5, bottom: 5),
-            child: Text('Populares')
-          ),
-
+          if(widget.sectionTitle != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 20, top: 5, bottom: 5),
+              child: Text('${widget.sectionTitle}')
+            ),
+          
           Expanded(
             child: ListView.builder(
+              controller: scrollController,
               scrollDirection: Axis.horizontal,
-              itemCount: 20,
-              itemBuilder: (_, i)=> const _MoviePoster() 
+              itemCount: widget.popularMovies.length,
+              itemBuilder: (_, i){
+                final movie = widget.popularMovies[i];
+                return _MoviePoster(movie: movie);
+              }
             ),
           )
         ],
@@ -31,7 +69,8 @@ class MovieSlider extends StatelessWidget {
 }
 
 class _MoviePoster extends StatelessWidget {
-  const _MoviePoster({super.key});
+  final Movie movie;
+  const _MoviePoster({super.key, required this.movie});
 
   @override
   Widget build(BuildContext context) {
@@ -45,18 +84,16 @@ class _MoviePoster extends StatelessWidget {
             onTap: () => Navigator.pushNamed(context, 'details', arguments: 'movie-instance'),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: const FadeInImage(
-                placeholder: AssetImage('assets/no-image.jpg'), 
-                image: NetworkImage('https://via.placeholder.com/300x400'),
+              child: FadeInImage(
+                placeholder: const AssetImage('assets/no-image.jpg'), 
+                image: NetworkImage(movie.fullImagePath),
                 width: 130,
                 height: 190,
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          const Text(
-            'loremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremloremlorem',
-            overflow: TextOverflow.ellipsis)
+          Text(movie.title, overflow: TextOverflow.ellipsis)
         ],
       ),
     );
