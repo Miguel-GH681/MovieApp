@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app/widgets/widgets.dart';
 
 class DetailsScreen extends StatelessWidget{
   const DetailsScreen({super.key});
@@ -15,7 +16,13 @@ class DetailsScreen extends StatelessWidget{
           SliverList(
             delegate: SliverChildListDelegate(
               [
-              _PosterAndTitle(),
+                const _PosterAndTitle(),
+                const _Overview(),
+                const _Overview(),
+                const _Overview(),
+                const _Overview(),
+                const _Overview(),
+                const CastingCards()
               ]
             ),
           )
@@ -53,6 +60,8 @@ class _PosterAndTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return Container(
       margin: const EdgeInsets.only( top: 20),
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -63,19 +72,43 @@ class _PosterAndTitle extends StatelessWidget {
             child: const FadeInImage(
               placeholder: AssetImage('assets/no-image.jpg'),
               image: NetworkImage('https://via.placeholder.com/200x300'),
-              height: 250,
+              height: 150,
             ),
           ),
           
-          SizedBox(height: 50),
+          const SizedBox(width: 20),
 
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              
+              Text('movie.title', style: textTheme.headlineSmall, overflow: TextOverflow.ellipsis, maxLines: 2),
+              Text('movie.originalTitle', style: textTheme.bodyLarge, overflow: TextOverflow.ellipsis),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Icon(Icons.star, size: 20, color: Colors.amber.shade700),
+                  const SizedBox(width: 5),
+                  const Text('movie.voteAverage')
+                ],
+              )
             ],
           )
         ],
       ),
+    );
+  }
+}
+
+class _Overview extends StatelessWidget {
+  const _Overview({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      child: Text('jlkasjdflk jlkasjdflkjlkasjdflkjlkasjdflkjlkasjdflkjlkasjdflkjlkasjdflkjlkasjdflkjlkasjdflkjlkasjdflkjlkasjdflkjlkasjdflkjlkasjdflkjlkasjdflkjlkasjdflk',
+      textAlign: TextAlign.justify, style: Theme.of(context).textTheme.bodyMedium),
     );
   }
 }
