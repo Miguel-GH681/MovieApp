@@ -39,6 +39,11 @@ class Movie {
     'https://image.tmdb.org/t/p/w500${posterPath}' : 
     'https://solucionesgrhydch.com/wp-content/themes/consultix/images/no-image-found-360x250.png';
 
+    get fullBackDropPath=>
+    (backdropPath != null) ?
+    'https://image.tmdb.org/t/p/w500${backdropPath}' : 
+    'https://solucionesgrhydch.com/wp-content/themes/consultix/images/no-image-found-360x250.png';
+
     factory Movie.fromRawJson(String str) => Movie.fromJson(json.decode(str));
 
     factory Movie.fromJson(Map<String, dynamic> json) => Movie(
