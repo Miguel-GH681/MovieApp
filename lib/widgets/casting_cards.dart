@@ -28,14 +28,19 @@ class CastingCards extends StatelessWidget {
           );
         }
 
+        final casting = snapshot.data;
+
         return Container(
           margin: const EdgeInsets.only(bottom: 30),
           width: double.infinity,
           height: 180,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemBuilder: (_, i) => const _CastCard(),
-            itemCount: 10,
+            itemBuilder: (_, i){
+              final cast = casting[i];
+              return _CastCard(actor: cast.name, urlActor: cast.fullProfilePath);
+            },
+            itemCount: casting!.length,
           ),
         );
       }
@@ -44,7 +49,11 @@ class CastingCards extends StatelessWidget {
 }
 
 class _CastCard extends StatelessWidget {
-  const _CastCard({super.key});
+
+  final String actor;
+  final String urlActor;
+
+  const _CastCard({super.key, required this.actor, required this.urlActor});
 
   @override
   Widget build(BuildContext context) {
@@ -56,15 +65,15 @@ class _CastCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: const FadeInImage(
-              image: NetworkImage('https://via.placeholder.com/200x300'),
-              placeholder: AssetImage('assets/no-image.jpg'),
+            child: FadeInImage(
+              image: NetworkImage(urlActor),
+              placeholder: const AssetImage('assets/no-image.jpg'),
               height: 140,
               fit: BoxFit.cover,
-            ),
+            ), 
           ),
-          SizedBox(height: 5),
-          const Text('movie.actor', overflow: TextOverflow.ellipsis, maxLines: 2)
+          const SizedBox(height: 5),
+          Text(actor, overflow: TextOverflow.ellipsis)
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:movie_app/models/now_playing_response.dart';
+import 'package:movie_app/models/search_movie.dart';
 
 import '../models/models.dart';
 
@@ -25,8 +26,8 @@ class MoviesProvider extends ChangeNotifier{
     getPopularMovies();
   }
 
-  Future<String> _getJsonData( String endpoint, [int page = 1] ) async {
-    var url = Uri.https(_baseUrl, endpoint, {'api_key':_apiKey, 'language':_language, 'page':'$page'});
+  Future<String> _getJsonData( String endpoint, [int page = 1, String query = ''] ) async {
+    var url = Uri.https(_baseUrl, endpoint, {'api_key':_apiKey, 'language':_language, 'page':'$page', 'query':'$query'});
 
       final response = await http.get(url);
       return response.body;
@@ -47,14 +48,22 @@ class MoviesProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  Future<List<Movie>> searchMovie( String query ) async {
+    final jsonData = await _getJsonData('3/search/movie', 1, query);
+    final response = SearchMovie.fromRawJson(jsonData);
+
+    return response.results;
+  }
+
   Future<List<Cast>> getMovieCast( int movieId ) async {
+    if(moviesCast.containsKey(movieId)) return moviesCast[movieId]!;
+    
     print('Solicitando información al servidor...');
 
     final jsonData = await _getJsonData('3/movie/$movieId/credits');
     final creditsResponse = CreditsResponse.fromRawJson( jsonData );
 
     moviesCast[movieId] = creditsResponse.cast;
-    print(creditsResponse.cast);
     return creditsResponse.cast;
   }
 }
